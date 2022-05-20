@@ -1,11 +1,7 @@
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Scanner;
 
-import com.sun.tools.javac.Main;
-
-import java.util.*;
-import java.lang.*;
-import java.text.*;
-import java.math.*;
 
 
 public class main {
@@ -22,11 +18,10 @@ public class main {
         IX,
         X }
 
-    //private NumRoman arg1Enum;
-    //private NumRoman arg2Enum;
 
 
-    public static void main(String[] args){
+
+    public  static void main (String[] args){
         System.out.println("Введите строку, содержащую выражение для вычисления( Пример: 3+5 или V-II");
         System.out.println("Ограничения: арифметические операторы +,-,*,/");
         System.out.println("Аргументы: числа арабские, римские  натуральные 0-10, ");
@@ -54,24 +49,21 @@ public class main {
 
 
 
-    };
+    }
 
-    private static String Calc (String myString)
+    private static @NotNull String Calc (@NotNull String myString)
     {
 
         String testString= myString;
         testString=testString.trim();
-        String ss= myString.trim();
-        //testString=testString.replace(' ',''); //удаляем возможные пробелы в выражении
 
-        //System.out.println("неподходящие символы:" +testString.matches("[^\\d\\s]")); // [\+\-\*/] [^\d\s+-/*IVX]  [^[\d\s[IVX]]]
-        if  (testString.matches("[+\\-*/]{1}")) {
+        if  (testString.matches("[+\\-*/]")) {
           System.out.println("Выражение корректно. Операция встречается всего 1 раз");
         }
         String[] exStrings= new String[2];
-        int arg1 = 0;
-        int arg2 = 0;
-        int resultInt = 0;
+        int arg1;
+        int arg2;
+        int resultInt=0;
         String resultString="";
         String resultCalc="";
         String resultCalcEnd="";
@@ -83,7 +75,7 @@ public class main {
         if (testString.length()>2) {  //проверяем на минимальную длину выражения (минимум 3 символа)
 
                 try {
-                    exStrings = testString.split("[\\+\\-\\*/]");
+                    exStrings = testString.split("[+\\-*/]");
                     // NumRoman.valueOf(testString.substring(0, 1));
                     int len=exStrings[0].length();
                     operation=testString.substring(len, len+1);
@@ -133,29 +125,17 @@ public class main {
                         }
                         resultString= arabic2Roman100(resultInt);
 
-                    } else if (exists & (exStrings[0].trim().matches("[\\d]{1,2}")) & exStrings[1].trim().matches("[\\d]{1,2}")) {
+                    } else if (exists & (exStrings[0].trim().matches("\\d{1,2}")) & exStrings[1].trim().matches("[\\d]{1,2}")) {
                         resultCalc = "... Проверка успешна - аргументы арабские цифры";
                         arg1 =     Integer.parseInt(exStrings[0]);
                         arg2 =     Integer.parseInt(exStrings[1]);
                         if (arg1<11&arg1>=0&arg2<11&arg2>=0) {
                             switch (operation) {
-                                case "+":
-                                    resultInt = arg1 + arg2;
-                                    break;
-
-                                case "*":
-                                    resultInt = arg1 * arg2;
-                                    break;
-
-                                case "-":
-                                    resultInt = arg1 - arg2;
-                                    break;
-
-                                case "/":
-                                    resultInt = arg1 / arg2;
-                                    break;
-                                default:
-                                    System.out.println("Операция не распознана");
+                                case "+" -> resultInt = arg1 + arg2;
+                                case "*" -> resultInt = arg1 * arg2;
+                                case "-" -> resultInt = arg1 - arg2;
+                                case "/" -> resultInt = arg1 / arg2;
+                                default -> System.out.println("Операция не распознана");
                             }
                             resultString= Integer.toString(resultInt);
                         } else {
@@ -180,51 +160,44 @@ public class main {
 
     }
 
-    private static String arabic2Roman100 (int arabicNum) {
+    private static @NotNull String arabic2Roman100 (int arabicNum) {
 
-        String romanNum100="";
-        NumRoman[] romanArrNum10= new NumRoman[];
+        String romanNum100;
+        NumRoman[] romanArrNum10;
         romanArrNum10=NumRoman.values();
         String[] romanArrStr10= new String[11];
         romanArrStr10[0]="";
         for (int i=1 ; i<=10; i++) {
-            romanArrStr10[i]=romanArrNum10[arabicNum].toString();
+            romanArrStr10[i]=romanArrNum10[i-1].toString();
         }
 
         if (arabicNum<=10) {
-            romanNum100=romanArrNum10[arabicNum-1].toString();
-        } else if (arabicNum<=20) {
-            romanNum100="X"+romanArrNum10[arabicNum%10-1].toString();
-        } else if (arabicNum<=30) {
-            romanNum100="XX"+romanArrNum10[arabicNum%10-1].toString();
-
+            romanNum100= romanArrStr10[arabicNum];
+        } else if (arabicNum<20) {
+            romanNum100="X"+ romanArrStr10[arabicNum%10];
+        } else if (arabicNum<30) {
+            romanNum100="XX"+ romanArrStr10[arabicNum%10];
         }
         else if (arabicNum<40)  {
-            romanNum100 = "XX" + romanArrNum10[arabicNum%10 - 1].toString();
+            romanNum100 = "XXX" + romanArrStr10[arabicNum%10 ];
         }
-        else if (arabicNum==40) {
-            romanNum100 = "XL";
+        else if (arabicNum<50) {
+            romanNum100 = "XL" + romanArrStr10[arabicNum%10 ];
         }
-        else if (arabicNum<=50) {
-            romanNum100 = "XL" + romanArrNum10[arabicNum%10 - 1].toString();
+        else if (arabicNum<60) {
+            romanNum100 = "L" + romanArrStr10[arabicNum%10 ];
         }
-        else if (arabicNum<=60) {
-            romanNum100 = "L" + romanArrNum10[arabicNum%10 - 1].toString();
+        else if (arabicNum<70) {
+            romanNum100 = "LX" + romanArrStr10[arabicNum%10 ];
         }
-        else if (arabicNum<=70) {
-            romanNum100 = "LX" + romanArrNum10[arabicNum%10 - 1].toString();
-        }
-        else if (arabicNum<=80) {
-            romanNum100 = "LXX" + romanArrNum10[arabicNum%10 - 1].toString();
+        else if (arabicNum<80) {
+            romanNum100 = "LXX" + romanArrStr10[arabicNum%10 ];
         }
         else if (arabicNum<90) {
-            romanNum100 = "LXXX" + romanArrNum10[arabicNum%10 - 1].toString();
-        }
-        else if (arabicNum==90) {
-            romanNum100 = "XC";
+            romanNum100 = "LXXX" + romanArrStr10[arabicNum%10 ];
         }
         else if (arabicNum<100) {
-            romanNum100 = "XC" + romanArrNum10[arabicNum%10 - 1].toString();
+            romanNum100 = "XC" + romanArrStr10[arabicNum%10 ];
         }
         else {
             romanNum100 = "C";
