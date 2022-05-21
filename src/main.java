@@ -25,7 +25,7 @@ public class main {
     {
         System.out.println("Введите строку, содержащую выражение для вычисления( Пример: 3+5 или V-II");
         System.out.println("Ограничения: арифметические операторы +,-,*,/");
-        System.out.println("Аргументы: числа арабские, римские  натуральные 0-10, ");
+        System.out.println("Аргументы: числа арабские натуральные 0-10, римские I-X, ");
         System.out.println("Аргументы могут быть одновременно только арабскими или римскими цифрами");
         System.out.println("Остановка работы калькулятора - строка stop");
 
@@ -40,10 +40,12 @@ public class main {
                 } else {
 
                     System.out.println(Calc(myString));
+                  //  break;
                 }
 
             } else {
-                System.out.println("Ошибка ввода строки, повторите ввод или наберите Stop, для выхода из программы");
+                //System.out.println("Ошибка ввода строки, повторите ввод или наберите Stop, для выхода из программы");
+                throw new Exception("Ошибка ввода строки, повторите ввод или наберите Stop, для выхода из программы");
             }
         }
 
@@ -58,9 +60,9 @@ public class main {
         String testString= myString;
         testString=testString.trim();
 
-        if  (testString.matches("[+\\-*/]")) {
-          System.out.println("Выражение корректно. Операция встречается всего 1 раз");
-        }
+//        if  (testString.matches("[+\\-*/]")) {
+//          System.out.println("Выражение корректно. Операция встречается всего 1 раз");
+//        }
         String[] exStrings= new String[2];
         int arg1;
         int arg2;
@@ -70,7 +72,7 @@ public class main {
         String resultCalcEnd="";
         String resultBeginEndFlag = "";
         String operation="";
-        boolean exists = true;
+
 
 
         if (testString.length()>2) {  //проверяем на минимальную длину выражения (минимум 3 символа)
@@ -83,16 +85,17 @@ public class main {
                     exStrings[0]=exStrings[0].trim();
                     exStrings[1]=exStrings[1].trim();
 
-                    //operation=testString.substring(len, len+1);
-                    System.out.println("Разобрали  строку "+exStrings[0]+"_"+exStrings[1]);
-                    System.out.println("Операция "+operation);
+
+//                    System.out.println("Разобрали  строку "+exStrings[0]+"_"+exStrings[1]);
+//                    System.out.println("Операция "+operation);
 
                 } catch ( Exception exc )  {
-                    exists = false;
-                    System.out.println(" Ошибка деления строки на подстроки"); //resultCalcEnd = " Ошибка деления строки на подстроки";
+
+                    throw new Exception("Ошибка деления строки на подстроки. Выражение не соответствует условию...");
+                   // System.out.println(" Ошибка деления строки на подстроки"); //resultCalcEnd = " Ошибка деления строки на подстроки";
                 }
                 try {
-                    if (exists & (exStrings[0].trim().matches("[IVX]{1,4}")) & exStrings[1].trim().matches("[IVX]{1,4}")) { // (exists & (NumRoman.valueOf(exStrings[0]) & NumRoman.valueOf(exStrings[1]))
+                    if (exStrings[0].trim().matches("[IVX]{1,4}") & exStrings[1].trim().matches("[IVX]{1,4}")) { // (exists & (NumRoman.valueOf(exStrings[0]) & NumRoman.valueOf(exStrings[1]))
 
                         NumRoman arg1Enum = NumRoman.valueOf(exStrings[0]);
                         NumRoman arg2Enum = NumRoman.valueOf(exStrings[1]);
@@ -102,7 +105,7 @@ public class main {
                             throw new Exception ( "Аргумент слева операции вычитания меньше аргумента справа. Результат выражения римскими цифрами не может быть <=0 " ) ;
                             //System.out.println("Результат выражения римскими цифрами не может быть <=0");
                         }
-                        resultCalc = "... Аргументы римские цифры: "+arg1+" "+arg2;
+                        //resultCalc = "... Аргументы римские цифры: "+arg1+" "+arg2;
 
 
                         switch (operation) {
@@ -110,17 +113,17 @@ public class main {
                             case "*" -> resultInt = arg1 * arg2;
                             case "-" -> resultInt = arg1 - arg2;
                             case "/" -> resultInt = arg1 / arg2;
-                            default -> throw new IllegalArgumentException() ;//System.out.println("Операция не распознана");
+                            default -> throw new Exception("Операция не распознана") ;//System.out.println("Операция не распознана");
                         }
                         if (resultInt>0) {
                             resultString= arabic2Roman100(resultInt);
                         }
                         else {
-                            throw new Exception ( "Аргумент слева операции вычитания равен аргументу справа. Результат выражения римскими цифрами не может быть =0 " ) ;
+                            throw new Exception ( "Аргумент слева операции вычитания равен или меньше аргумента справа. Результат выражения римскими цифрами не может быть равен или меньше ноля " ) ;
                         }
 
-                    } else if (exists & (exStrings[0].trim().matches("\\d{1,2}")) & exStrings[1].trim().matches("[\\d]{1,2}")) {
-                        resultCalc = "... Проверка успешна - аргументы арабские цифры";
+                    } else if (exStrings[0].trim().matches("\\d{1,2}") & exStrings[1].trim().matches("\\d{1,2}")) {
+                        //resultCalc = "... Проверка успешна - аргументы арабские цифры";
                         arg1 =     Integer.parseInt(exStrings[0]);
                         arg2 =     Integer.parseInt(exStrings[1]);
                         if (arg1<11&arg1>=0&arg2<11&arg2>=0) {
@@ -129,28 +132,32 @@ public class main {
                                 case "*" -> resultInt = arg1 * arg2;
                                 case "-" -> resultInt = arg1 - arg2;
                                 case "/" -> resultInt = arg1 / arg2;
-                                default -> System.out.println("Операция не распознана");
+                                default -> throw new Exception ("Арифметическая операция не распознана"); //System.out.println("Операция не распознана");
                             }
                             resultString= Integer.toString(resultInt);
                         } else {
-                            System.out.println("Значения аргументов больше 10");
+                            //System.out.println("Значения аргументов больше 10");
+                            throw new Exception ("Выражение не соответствует условию: Значения аргументов больше 10");
                         }
                     } else {
-                        resultCalc = "... Аргументы НЕ римские цифры и не арабские!!! или не одинакового типа с двух сторон";
+                        //resultCalc = "... Или аргументы НЕ являются римскими/арабскими цифрами или не одинакового типа с обеих сторон выражения";
+                        throw new Exception (".... Или аргументы НЕ являются римскими/арабскими цифрами или не одинакового типа с обеих сторон выражения");
                     }
-                } catch (IllegalArgumentException e)  {
-                exists = false;
-                resultCalcEnd = " Выражение не соответствует условию...";
+                } catch ( Exception Exc )  {
+
+                //resultCalcEnd = " Выражение не соответствует условию...";
+                    throw new Exception ("Выражение не соответствует условию: Или аргументы НЕ являются римскими/арабскими цифрами или не одинакового типа с обеих сторон выражения");
             }
 
         } else {
-                //
-            resultCalc="";
+
+            //resultCalc="";
 
            // resultBeginEndFlag = " Кол-во символов выражения меньше минимального (3 символа)";
-           // throw new MyException ("String can not be empty!");
+           throw new Exception ("Кол-во символов выражения меньше минимального (3 символа)");
         }
-        return resultCalc+resultCalcEnd+resultBeginEndFlag+" результат: "+resultString;
+//        return resultCalc+resultCalcEnd+resultBeginEndFlag+" результат: "+resultString;
+        return resultString;
 
     }
 
