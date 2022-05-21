@@ -21,7 +21,8 @@ public class main {
 
 
 
-    public  static void main (String[] args){
+    public  static void main (String[] args) throws Exception
+    {
         System.out.println("Введите строку, содержащую выражение для вычисления( Пример: 3+5 или V-II");
         System.out.println("Ограничения: арифметические операторы +,-,*,/");
         System.out.println("Аргументы: числа арабские, римские  натуральные 0-10, ");
@@ -51,7 +52,7 @@ public class main {
 
     }
 
-    private static @NotNull String Calc (@NotNull String myString)
+    private static @NotNull String Calc (@NotNull String myString) throws Exception
     {
 
         String testString= myString;
@@ -86,9 +87,9 @@ public class main {
                     System.out.println("Разобрали  строку "+exStrings[0]+"_"+exStrings[1]);
                     System.out.println("Операция "+operation);
 
-                } catch (IllegalArgumentException e) {
+                } catch ( Exception exc )  {
                     exists = false;
-                    resultCalcEnd = " Ошибка деления строки на подстроки";
+                    System.out.println(" Ошибка деления строки на подстроки"); //resultCalcEnd = " Ошибка деления строки на подстроки";
                 }
                 try {
                     if (exists & (exStrings[0].trim().matches("[IVX]{1,4}")) & exStrings[1].trim().matches("[IVX]{1,4}")) { // (exists & (NumRoman.valueOf(exStrings[0]) & NumRoman.valueOf(exStrings[1]))
@@ -97,33 +98,26 @@ public class main {
                         NumRoman arg2Enum = NumRoman.valueOf(exStrings[1]);
                         arg1 = arg1Enum.ordinal()+1;
                         arg2 = arg2Enum.ordinal()+1;
-
-                        resultCalc = "... Аргументы римские цифры: "+arg1+" "+arg2;
-                        switch (operation) {
-                                case "+":
-                                    resultInt = arg1 + arg2;
-                                    break;
-
-                                case "*":
-                                    resultInt = arg1 * arg2;
-                                    break;
-
-                                case "-":
-                                    if (arg1>arg2) {
-                                        resultInt = arg1 - arg2;
-                                    }
-                                    else {
-                                        System.out.println("Результат выражения римскими цифрами не может быть <=0");
-                                    }
-                                    break;
-
-                                case "/":
-                                    resultInt = arg1 / arg2;
-                                    break;
-                                default:
-                                    System.out.println("Операция не распознана");
+                        if (arg1<arg2&"-".equals(operation)) {
+                            throw new Exception ( "Аргумент слева операции вычитания меньше аргумента справа. Результат выражения римскими цифрами не может быть <=0 " ) ;
+                            //System.out.println("Результат выражения римскими цифрами не может быть <=0");
                         }
-                        resultString= arabic2Roman100(resultInt);
+                        resultCalc = "... Аргументы римские цифры: "+arg1+" "+arg2;
+
+
+                        switch (operation) {
+                            case "+" -> resultInt = arg1 + arg2;
+                            case "*" -> resultInt = arg1 * arg2;
+                            case "-" -> resultInt = arg1 - arg2;
+                            case "/" -> resultInt = arg1 / arg2;
+                            default -> throw new IllegalArgumentException() ;//System.out.println("Операция не распознана");
+                        }
+                        if (resultInt>0) {
+                            resultString= arabic2Roman100(resultInt);
+                        }
+                        else {
+                            throw new Exception ( "Аргумент слева операции вычитания равен аргументу справа. Результат выражения римскими цифрами не может быть =0 " ) ;
+                        }
 
                     } else if (exists & (exStrings[0].trim().matches("\\d{1,2}")) & exStrings[1].trim().matches("[\\d]{1,2}")) {
                         resultCalc = "... Проверка успешна - аргументы арабские цифры";
@@ -160,16 +154,10 @@ public class main {
 
     }
 
-    private static @NotNull String arabic2Roman100 (int arabicNum) {
-
+    private static @NotNull String arabic2Roman100 (int arabicNum)
+    {
         String romanNum100;
-        NumRoman[] romanArrNum10;
-        romanArrNum10=NumRoman.values();
-        String[] romanArrStr10= new String[11];
-        romanArrStr10[0]="";
-        for (int i=1 ; i<=10; i++) {
-            romanArrStr10[i]=romanArrNum10[i-1].toString();
-        }
+        String[] romanArrStr10 = getRomanArrStr10();
 
         if (arabicNum<=10) {
             romanNum100= romanArrStr10[arabicNum];
@@ -204,5 +192,17 @@ public class main {
         }
 
         return romanNum100;
+    }
+
+    @NotNull
+    private static String[] getRomanArrStr10() {
+        NumRoman[] romanArrNum10;
+        romanArrNum10=NumRoman.values();
+        String[] romanArrStr10= new String[11];
+        romanArrStr10[0]="";
+        for (int i=1 ; i<=10; i++) {
+            romanArrStr10[i]=romanArrNum10[i-1].toString();
+        }
+        return romanArrStr10;
     }
 }
