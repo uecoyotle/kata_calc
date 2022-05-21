@@ -1,37 +1,27 @@
-import org.jetbrains.annotations.NotNull;
+//import org.jetbrains.annotations.NotNull;
 
 import java.util.Scanner;
 
 
 
-public class main {
+public class Main {
 
-    protected enum NumRoman {
-        I ,
-        II ,
-        III,
-        IV,
-        V,
-        VI,
-        VII,
-        VIII,
-        IX,
-        X }
+    protected enum NumRoman { I , II ,  III,  IV, V,  VI, VII,  VIII, IX,  X }
 
 
 
 
     public  static void main (String[] args) throws Exception
     {
-        System.out.println("Введите строку, содержащую выражение для вычисления( Пример: 3+5 или V-II");
-        System.out.println("Ограничения: арифметические операторы +,-,*,/");
-        System.out.println("Аргументы: числа арабские натуральные 0-10, римские I-X, ");
-        System.out.println("Аргументы могут быть одновременно только арабскими или римскими цифрами");
-        System.out.println("Остановка работы калькулятора - строка stop");
+//        System.out.println("Введите строку, содержащую выражение для вычисления( Пример: 3+5 или V-II");
+//        System.out.println("Ограничения: арифметические операторы +,-,*,/");
+//        System.out.println("Аргументы: числа арабские натуральные 0-10, римские I-X, ");
+//        System.out.println("Аргументы могут быть одновременно только арабскими или римскими цифрами");
+//        System.out.println("Остановка работы калькулятора - строка stop");
 
         Scanner locale=new Scanner (System.in);
         while (true) {
-            System.out.print(":::");
+            // System.out.print(":::"); // раскомментировать для строки приглашения ввода
             if (locale.hasNextLine()) {
                 String myString = locale.nextLine();
                 if (myString.equals("stop")) {
@@ -39,8 +29,8 @@ public class main {
                     break;
                 } else {
 
-                    System.out.println(Calc(myString));
-                  //  break;
+                    System.out.println(calc(myString));
+                    break; // убрать если надо цикл вычислений для теста
                 }
 
             } else {
@@ -54,10 +44,10 @@ public class main {
 
     }
 
-    private static @NotNull String Calc (@NotNull String myString) throws Exception
+    public static String calc (String input) throws Exception
     {
 
-        String testString= myString;
+        String testString= input;
         testString=testString.trim();
 
 //        if  (testString.matches("[+\\-*/]")) {
@@ -68,9 +58,9 @@ public class main {
         int arg2;
         int resultInt=0;
         String resultString="";
-        String resultCalc="";
-        String resultCalcEnd="";
-        String resultBeginEndFlag = "";
+//        String resultCalc="";
+//        String resultCalcEnd="";
+//        String resultBeginEndFlag = "";
         String operation="";
 
 
@@ -91,10 +81,10 @@ public class main {
 
                 } catch ( Exception exc )  {
 
-                    throw new Exception("Ошибка деления строки на подстроки. Выражение не соответствует условию...");
+                    throw new Exception("Ошибка деления строки на подстроки. Выражение не соответствует условию.Операция не распознана.");
                    // System.out.println(" Ошибка деления строки на подстроки"); //resultCalcEnd = " Ошибка деления строки на подстроки";
                 }
-                try {
+//                try {
                     if (exStrings[0].trim().matches("[IVX]{1,4}") & exStrings[1].trim().matches("[IVX]{1,4}")) { // (exists & (NumRoman.valueOf(exStrings[0]) & NumRoman.valueOf(exStrings[1]))
 
                         NumRoman arg1Enum = NumRoman.valueOf(exStrings[0]);
@@ -113,14 +103,11 @@ public class main {
                             case "*" -> resultInt = arg1 * arg2;
                             case "-" -> resultInt = arg1 - arg2;
                             case "/" -> resultInt = arg1 / arg2;
-                            default -> throw new Exception("Операция не распознана") ;//System.out.println("Операция не распознана");
+                            default -> throw new Exception("Арифметическая операция не распознана") ;//System.out.println("Операция не распознана");
                         }
-                        if (resultInt>0) {
-                            resultString= arabic2Roman100(resultInt);
-                        }
-                        else {
-                            throw new Exception ( "Аргумент слева операции вычитания равен или меньше аргумента справа. Результат выражения римскими цифрами не может быть равен или меньше ноля " ) ;
-                        }
+                        resultString= arabic2Roman100(resultInt);
+
+
 
                     } else if (exStrings[0].trim().matches("\\d{1,2}") & exStrings[1].trim().matches("\\d{1,2}")) {
                         //resultCalc = "... Проверка успешна - аргументы арабские цифры";
@@ -141,13 +128,13 @@ public class main {
                         }
                     } else {
                         //resultCalc = "... Или аргументы НЕ являются римскими/арабскими цифрами или не одинакового типа с обеих сторон выражения";
-                        throw new Exception (".... Или аргументы НЕ являются римскими/арабскими цифрами или не одинакового типа с обеих сторон выражения");
+                        throw new Exception ("Или аргументы НЕ являются римскими/арабскими цифрами, или разной системы счисления");
                     }
-                } catch ( Exception Exc )  {
-
-                //resultCalcEnd = " Выражение не соответствует условию...";
-                    throw new Exception ("Выражение не соответствует условию: Или аргументы НЕ являются римскими/арабскими цифрами или не одинакового типа с обеих сторон выражения");
-            }
+//                } catch ( Exception Exc )  {
+//
+//                //resultCalcEnd = " Выражение не соответствует условию...";
+//                    throw new Exception ("Выражение не соответствует условию: Или аргументы больше 10, или НЕ являются римскими/арабскими цифрами или не одинакового типа с обеих сторон выражения");
+//            }
 
         } else {
 
@@ -161,7 +148,7 @@ public class main {
 
     }
 
-    private static @NotNull String arabic2Roman100 (int arabicNum)
+    private static String arabic2Roman100 (int arabicNum)
     {
         String romanNum100;
         String[] romanArrStr10 = getRomanArrStr10();
@@ -201,7 +188,7 @@ public class main {
         return romanNum100;
     }
 
-    @NotNull
+
     private static String[] getRomanArrStr10() {
         NumRoman[] romanArrNum10;
         romanArrNum10=NumRoman.values();
