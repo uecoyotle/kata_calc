@@ -67,11 +67,17 @@ public class Main {
 
         if (testString.length()>2) {  //проверяем на минимальную длину выражения (минимум 3 символа)
 
+                if ( testString.trim().matches("\\d") ) {  //matches("\\d[+\\-*/XVI]}")
+                throw new Exception("Выражение не соответствует условию. Есть неразрешенные символы.");
+            }
                 try {
-                    exStrings = testString.split("[+\\-*/]");
+                    exStrings = testString.trim().split("[+\\-*/]");
                     // NumRoman.valueOf(testString.substring(0, 1));
                     int len=exStrings[0].length();
                     operation=testString.substring(len, len+1);
+                    if ((exStrings[0].length()+ exStrings[1].length()+1)<testString.trim().length()) {
+                        throw new Exception ("Ошибка деления строки на подстроки. Выражение не соответствует условию. Арифметических операций должна быть только одна");
+                    }
                     exStrings[0]=exStrings[0].trim();
                     exStrings[1]=exStrings[1].trim();
 
@@ -91,8 +97,8 @@ public class Main {
                         NumRoman arg2Enum = NumRoman.valueOf(exStrings[1]);
                         arg1 = arg1Enum.ordinal()+1;
                         arg2 = arg2Enum.ordinal()+1;
-                        if (arg1<arg2&"-".equals(operation)) {
-                            throw new Exception ( "Аргумент слева операции вычитания меньше аргумента справа. Результат выражения римскими цифрами не может быть <=0 " ) ;
+                        if (arg1<=arg2&"-".equals(operation)) {
+                            throw new Exception ( "Аргумент слева операции вычитания для римских цифр меньше или равен аргументу справа. Результат выражения римскими цифрами не может быть <=0 " ) ;
                             //System.out.println("Результат выражения римскими цифрами не может быть <=0");
                         }
                         //resultCalc = "... Аргументы римские цифры: "+arg1+" "+arg2;
@@ -105,6 +111,7 @@ public class Main {
                             case "/" -> resultInt = arg1 / arg2;
                             default -> throw new Exception("Арифметическая операция не распознана") ;//System.out.println("Операция не распознана");
                         }
+
                         resultString= arabic2Roman100(resultInt);
 
 
